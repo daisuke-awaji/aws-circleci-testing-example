@@ -37,13 +37,13 @@ jobs:
           paths:
             - lambda_layer.zip
             - built/
-            - scripts/
 
   deploy:
     docker:
       - image: innovatorjapan/awscli:latest
     working_directory: ~/repo
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo/
       - run: sh scripts/deploy_lambda_layer.sh dev

@@ -1,0 +1,1 @@
+[![codecov](https://codecov.io/gh/daisuke-awaji/awsTestingTechnique/branch/master/graph/badge.svg)](https://codecov.io/gh/daisuke-awaji/awsTestingTechnique)

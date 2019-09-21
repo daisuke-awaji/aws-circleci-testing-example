@@ -1,0 +1,33 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  build:
+    # CircleCIでdocker-composeを使用するため、ホストマシンにはVMを使用する
+    machine:
+      image: ubuntu-1604:201903-01
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      # LocalStackコンテナをビルドする
+      - run: docker-compose -f ./docker-compose.yaml build
+      # LocalStackコンテナを起動する
+      - run: docker-compose -f ./docker-compose.yaml up -d
+      - run: npm install
+      # LocalStackコンテナが起動するまで待つ
+      - run:
+          name: sleep for waiting launch db and localstack
+          command: sleep 10
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run test
+      - run: npm run coverage

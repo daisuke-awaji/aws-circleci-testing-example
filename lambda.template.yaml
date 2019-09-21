@@ -43,8 +43,7 @@ Resources:
       Handler: functions/thumbnailJpgFile.handler
       Runtime: nodejs10.x
       Role: !GetAtt ThumbnailFunctionIAMRole.Arn
-      MemorySize: 256
-      ReservedConcurrentExecutions: 500 # Aurora の max connection の値に応じて調整する
+      MemorySize: 128
       Layers:
         - !Ref NodeModulesLayer
       Events:
@@ -52,7 +51,7 @@ Resources:
           Type: S3
           Properties:
             Bucket: !Ref Bucket
-            Events: s3:ObjectCreated:* # オブジェクトがPUT, POST, COPY, CompleteMultipartUploadされた際に起動
+            Events: s3:ObjectCreated:*
 
   ThumbnailFunctionIAMRole:
     Type: AWS::IAM::Role

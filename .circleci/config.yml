@@ -39,6 +39,9 @@ jobs:
             - built/
 
   deploy:
+    parameters:
+      env:
+        type: string
     docker:
       - image: innovatorjapan/awscli:latest
     working_directory: ~/repo
@@ -46,8 +49,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo/
-      - run: sh scripts/deploy_lambda_layer.sh dev
-      - run: sh scripts/deploy_lambda.sh dev
+      - run: sh scripts/deploy_lambda_layer.sh << parameters.env >>
+      - run: sh scripts/deploy_lambda.sh << parameters.env >>
 
 workflows:
   version: 2
@@ -58,6 +61,7 @@ workflows:
           requires:
             - test      
       - deploy:
+          env: dev
           requires:
             - build
           filters:

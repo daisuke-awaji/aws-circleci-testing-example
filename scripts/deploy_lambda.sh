@@ -4,7 +4,7 @@ ENV=$1
 
 aws cloudformation package --template-file lambda.template.yaml \
             --output-template-file packaged.yaml \
-            --s3-bucket sam-template-packaged
+            --s3-bucket sam-template-packaged-ap-northeast-1
 
 aws cloudformation deploy --stack-name ${ENV}-thumbnailFunctionStack \
            --template-file packaged.yaml \

@@ -31,11 +31,20 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
       - run: npm install
       - run: npm run build:lambda
-      - store_artifacts:
-          path: ~/repo/built
       - run: npm run build:lambda-layer
-      - store_artifacts:
-          path: ~/repo/lambda_layer.zip
+      - persist_to_workspace:
+          root: ~/repo/
+          paths:
+            - lambda_layer.zip
+            - built/
+
+  deploy:
+    docker:
+      - image: circleci/python:3.7.4-stretch
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo/
 
 workflows:
   version: 2

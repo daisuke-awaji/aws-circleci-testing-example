@@ -4,26 +4,42 @@ jobs:
     # CircleCIでdocker-composeを使用するため、ホストマシンにはVMを使用する
     machine:
       image: ubuntu-1604:201903-01
-
     working_directory: ~/repo
-
     steps:
       - checkout
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
-      # LocalStackコンテナをビルドする
-      - run: docker-compose -f ./docker-compose.yaml build
-      # LocalStackコンテナを起動する
       - run: docker-compose -f ./docker-compose.yaml up -d
       - run: npm install
-      # LocalStackコンテナが起動するまで待つ
-      - run:
-          name: sleep for waiting launch db and localstack
-          command: sleep 10
+      - run: sleep 10
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm run test
       - run: npm run coverage
+
+  build:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: npm install
+      - run: npm run build:lambda
+      - store_artifacts:
+          path: ~/repo/built
+      - run: npm run build:lambda-layer
+      - store_artifacts:
+          path: ~/repo/lambda_layer.zip
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - deploy

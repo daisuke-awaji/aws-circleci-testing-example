@@ -7,18 +7,18 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      # - restore_cache:
-      #     keys:
-      #       - v1-dependencies-{{ checksum "package.json" }}
-      # - run: docker-compose -f ./docker-compose.yaml up -d
-      # - run: npm install
-      # - run: sleep 10
-      # - save_cache:
-      #     paths:
-      #       - node_modules
-      #     key: v1-dependencies-{{ checksum "package.json" }}
-      # - run: npm run test
-      # - run: npm run coverage
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+      - run: docker-compose -f ./docker-compose.yaml up -d
+      - run: npm install
+      - run: sleep 10
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run test
+      - run: npm run coverage
 
   build:
     docker:
@@ -54,7 +54,7 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  test-build-deploy:
     jobs:
       - test:
           filters:
@@ -94,4 +94,4 @@ workflows:
             branches:
               ignore: /.*/
             tags:
-              only: /^v[0-9](\.[0-9]){2}$/
+              only: /v.*/

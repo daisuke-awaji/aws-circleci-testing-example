@@ -46,8 +46,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo/
-      - run: sh scripts/deploy_lambda_layer.sh
-      - run: sh scripts/deploy_lambda.sh
+      - run: sh scripts/deploy_lambda_layer.sh dev
+      - run: sh scripts/deploy_lambda.sh dev
 
 workflows:
   version: 2

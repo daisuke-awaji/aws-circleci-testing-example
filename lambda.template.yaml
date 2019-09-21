@@ -35,7 +35,7 @@ Resources:
       FunctionName: !Sub ${Env}-thumbnail-jpg
       Description: サムネイル生成
       CodeUri: ./built
-      Handler: functions/thumbnailJpgFile.handler
+      Handler: functions/before.handler
       Runtime: nodejs10.x
       Role: !GetAtt ThumbnailFunctionIAMRole.Arn
       MemorySize: 128

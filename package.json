@@ -9,7 +9,7 @@
     "start": "ts-node src/main.ts",
     "build:lambda": "NODE_ENV=production tsc",
     "build:lambda-layer": "mkdir -p layer_modules && cp package.json layer_modules && npm i --production --prefix layer_modules && ts-node scripts/node-modules-archives.ts",
-    "deploy:lambda": "sh script/sam_deploy.sh"
+    "deploy:lambda": "sh scripts/deploy_lambda.sh"
   },
   "keywords": [],
   "author": "",

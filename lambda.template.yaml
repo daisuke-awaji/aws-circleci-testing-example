@@ -8,11 +8,6 @@ Globals:
 Parameters:
   Env:
     Type: String
-    AllowedValues:
-      - dev
-      - test
-      - staging
-      - production
 
 Resources:
   NodeModulesLayer:

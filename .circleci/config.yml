@@ -56,10 +56,20 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - test
+      - test:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/      
       - build:
           requires:
-            - test      
+            - test
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/            
       - deploy:
           env: dev
           requires:
@@ -67,4 +77,21 @@ workflows:
           filters:
             branches:
               only:
-                - master            
+                - develop
+      - deploy:
+          env: staging
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy:
+          env: production
+          requires:
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v[0-9](\.[0-9]){2}$/

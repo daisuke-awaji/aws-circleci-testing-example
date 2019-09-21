@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 900
+
+Parameters:
+  Env:
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - staging
+      - production
+
+Resources:
+  NodeModulesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub ${Env}_lambda_layer
+      Description: node_modules
+      ContentUri:
+        Bucket: !Sub ${Env}-lambda-layer-upload-bucket-nodejs10
+        Key: lambda_layer.zip
+      CompatibleRuntimes:
+        - nodejs10.x
+      LicenseInfo: MIT
+
+  Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Sub ${Env}-jpg-thumbnail-bucket
+      AccessControl: Private
+
+  ThumbnailFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${Env}-thumbnail-jpg
+      Description: サムネイル生成
+      CodeUri: ./built
+      Handler: functions/thumbnailJpgFile.handler
+      Runtime: nodejs10.x
+      Role: !GetAtt ThumbnailFunctionIAMRole.Arn
+      MemorySize: 256
+      ReservedConcurrentExecutions: 500 # Aurora の max connection の値に応じて調整する
+      Layers:
+        - !Ref NodeModulesLayer
+      Events:
+        Bucket:
+          Type: S3
+          Properties:
+            Bucket: !Ref Bucket
+            Events: s3:ObjectCreated:* # オブジェクトがPUT, POST, COPY, CompleteMultipartUploadされた際に起動
+
+  ThumbnailFunctionIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Policies:
+        - PolicyName: !Sub ${Env}-thumbnail-function-iam-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - s3:*
+                Resource: "*"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ""
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  ThumbnailFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${ThumbnailFunction}
+      RetentionInDays: 30

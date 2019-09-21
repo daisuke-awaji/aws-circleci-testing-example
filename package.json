@@ -6,7 +6,10 @@
   "scripts": {
     "test": "jest",
     "coverage": "codecov",
-    "start": "ts-node src/main.ts"
+    "start": "ts-node src/main.ts",
+    "build:lambda": "NODE_ENV=production tsc",
+    "build:lambda-layer": "mkdir -p layer_modules && cp package.json layer_modules && npm i --production --prefix layer_modules && ts-node scripts/node-modules-archives.ts",
+    "deploy:lambda": "sh script/sam_deploy.sh"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +18,7 @@
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.18",
     "@types/node": "^12.7.3",
+    "archiver": "^3.1.1",
     "codecov": "^3.5.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.0.2",

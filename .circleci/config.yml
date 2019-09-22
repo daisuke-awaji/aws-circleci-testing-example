@@ -1,5 +1,13 @@
 version: 2.1
 jobs:
+  cfn-lint:
+    docker:
+      - image: amaysim/cfn-python-lint
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run: cfn-lint -t lambda.template.yaml
+        
   test:
     # CircleCIでdocker-composeを使用するため、ホストマシンにはVMを使用する
     machine:
@@ -56,6 +64,12 @@ workflows:
   version: 2
   test-build-deploy:
     jobs:
+      - cfn-lint:
+          filters:
+            branches:
+              only: /.*/
+            tags:
+              only: /.*/      
       - test:
           filters:
             branches:

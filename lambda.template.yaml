@@ -35,7 +35,7 @@ Resources:
       FunctionName: !Sub ${Env}-thumbnail-jpg
       Description: サムネイル生成
       CodeUri: ./built
-      Handler: functions/thumbnailJpgFile.handler
+      Handler: functions/after.handler
       Runtime: nodejs10.x
       Role: !GetAtt ThumbnailFunctionIAMRole.Arn
       MemorySize: 128
@@ -65,6 +65,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:*
+                  - dynamodb:*
                 Resource: "*"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"

@@ -17,13 +17,15 @@
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^24.0.18",
+    "@types/js-yaml": "^3.12.1",
     "@types/node": "^12.7.3",
     "archiver": "^3.1.1",
     "codecov": "^3.5.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.2",
+    "yaml-cfn": "^0.2.2"
   },
   "dependencies": {
     "aws-sdk": "^2.521.0"
